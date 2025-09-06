@@ -1,0 +1,14 @@
+post_install() {
+    echo "LogiOps has been installed."
+    echo ""
+    echo "To configure LogiOps:"
+    echo "1. Copy the example configuration: sudo cp /usr/share/doc/logiops/logid.example.cfg /etc/logid.cfg"
+    echo "2. Edit /etc/logid.cfg to match your device setup"
+    echo "3. Enable and start the service: sudo systemctl enable --now logid"
+    echo ""
+    echo "For configuration details, visit: https://github.com/PixlOne/logiops/wiki/Configuration"
+}
+
+post_upgrade() {
+    post_install
+}
