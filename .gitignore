@@ -2,3 +2,9 @@
 *.swp
 *~
 /compile_commands.json
+
+# Pacman/makepkg generated files
+*.pkg.tar.zst
+/pkg/
+/src/
+/logiops/

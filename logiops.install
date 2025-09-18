@@ -1,14 +1,25 @@
 post_install() {
-    echo "LogiOps has been installed."
-    echo ""
-    echo "To configure LogiOps:"
-    echo "1. Copy the example configuration: sudo cp /usr/share/doc/logiops/logid.example.cfg /etc/logid.cfg"
-    echo "2. Edit /etc/logid.cfg to match your device setup"
-    echo "3. Enable and start the service: sudo systemctl enable --now logid"
-    echo ""
-    echo "For configuration details, visit: https://github.com/PixlOne/logiops/wiki/Configuration"
+    systemctl daemon-reload
+    echo -e "\e[32m==> Copy example config to get started:\e[0m"
+    echo "    cp /usr/share/doc/logiops/logid.example.cfg /etc/logid.cfg"
+    echo -e "\e[32m==> To enable LogiOps:\e[0m"
+    echo "    systemctl enable --now logid"
+    echo -e "\e[32m==> For configuration details, visit:\e[0m"
+    echo "    https://github.com/PixlOne/logiops/wiki/Configuration"
 }
 
 post_upgrade() {
-    post_install
+    systemctl daemon-reload
+    if systemctl is-enabled logid.service &>/dev/null; then
+        echo "==> Restarting logid service..."
+        systemctl restart logid
+    fi
+}
+
+pre_remove() {
+    systemctl disable --now logid 2>/dev/null || true
+}
+
+post_remove() {
+    systemctl daemon-reload
 }

@@ -1,5 +1,4 @@
 # Maintainer: https://github.com/nathanielx
-# Usage: makepkg -si
 
 pkgname=logiops
 pkgver=0.3.5
@@ -17,41 +16,27 @@ sha256sums=('SKIP')
 
 prepare() {
     cd "$pkgname"
-    
-    # Initialize submodules
     git submodule update --init --recursive
 }
 
 build() {
     cd "$pkgname"
     
-    # Create build directory
-    mkdir -p build
-    cd build
+    cmake -B build -S . \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_INSTALL_LIBDIR=lib
     
-    # Configure with CMake
-    cmake -DCMAKE_BUILD_TYPE=Release \
-          -DCMAKE_INSTALL_PREFIX=/usr \
-          -DCMAKE_INSTALL_LIBDIR=lib \
-          ..
-    
-    # Build
-    make
+    cmake --build build
 }
 
 package() {
-    cd "$pkgname/build"
+    cd "$pkgname"
     
-    # Install the binary and systemd service
-    make DESTDIR="$pkgdir/" install
+    DESTDIR="$pkgdir" cmake --install build
     
-    # Install example configuration
-    install -Dm644 ../logid.example.cfg "$pkgdir/usr/share/doc/$pkgname/logid.example.cfg"
-    
-    # Install documentation
-    install -Dm644 ../README.md "$pkgdir/usr/share/doc/$pkgname/README.md"
-    install -Dm644 ../TESTED.md "$pkgdir/usr/share/doc/$pkgname/TESTED.md"
-    
-    # Install license
-    install -Dm644 ../LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+    install -Dm644 logid.example.cfg "$pkgdir/usr/share/doc/$pkgname/logid.example.cfg"
+    install -Dm644 README.md "$pkgdir/usr/share/doc/$pkgname/README.md"
+    install -Dm644 TESTED.md "$pkgdir/usr/share/doc/$pkgname/TESTED.md"
+    install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 }
